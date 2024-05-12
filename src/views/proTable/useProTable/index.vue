@@ -122,10 +122,8 @@ const headerRender = (scope: HeaderRenderScope<User.ResUserList>) => {
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { type: "selection", fixed: "left", width: 70 },
-  { type: "sort", label: "Sort", width: 80 },
-  { type: "expand", label: "Expand", width: 85 },
   {
-    prop: "username",
+    prop: "name",
     label: "用户姓名",
     search: { el: "input", tooltip: "我是搜索提示" },
     render: scope => {
@@ -137,7 +135,7 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
     }
   },
   {
-    prop: "gender",
+    prop: "phone",
     label: "性别",
     // 字典数据（本地数据）
     // enum: genderType,
@@ -150,7 +148,7 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   },
   {
     // 多级 prop
-    prop: "user.detail.age",
+    prop: "role",
     label: "年龄",
     search: {
       // 自定义 search 显示内容

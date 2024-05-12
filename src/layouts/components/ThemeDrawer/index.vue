@@ -90,40 +90,6 @@
       <span>色弱模式</span>
       <el-switch v-model="isWeak" @change="changeGreyOrWeak('weak', !!$event)" />
     </div>
-
-    <!-- 界面设置 -->
-    <el-divider class="divider" content-position="center">
-      <el-icon><Setting /></el-icon>
-      界面设置
-    </el-divider>
-    <div class="theme-item">
-      <span>菜单折叠</span>
-      <el-switch v-model="isCollapse" />
-    </div>
-    <div class="theme-item">
-      <span>菜单手风琴</span>
-      <el-switch v-model="accordion" />
-    </div>
-    <div class="theme-item">
-      <span>面包屑</span>
-      <el-switch v-model="breadcrumb" />
-    </div>
-    <div class="theme-item">
-      <span>面包屑图标</span>
-      <el-switch v-model="breadcrumbIcon" />
-    </div>
-    <div class="theme-item">
-      <span>标签栏</span>
-      <el-switch v-model="tabs" />
-    </div>
-    <div class="theme-item">
-      <span>标签栏图标</span>
-      <el-switch v-model="tabsIcon" />
-    </div>
-    <div class="theme-item">
-      <span>页脚</span>
-      <el-switch v-model="footer" />
-    </div>
   </el-drawer>
 </template>
 
@@ -140,21 +106,7 @@ import SwitchDark from "@/components/SwitchDark/index.vue";
 const { changePrimary, changeGreyOrWeak, setAsideTheme, setHeaderTheme } = useTheme();
 
 const globalStore = useGlobalStore();
-const {
-  layout,
-  primary,
-  isGrey,
-  isWeak,
-  asideInverted,
-  headerInverted,
-  isCollapse,
-  accordion,
-  breadcrumb,
-  breadcrumbIcon,
-  tabs,
-  tabsIcon,
-  footer
-} = storeToRefs(globalStore);
+const { layout, primary, isGrey, isWeak, asideInverted, headerInverted } = storeToRefs(globalStore);
 
 // 预定义主题颜色
 const colorList = [

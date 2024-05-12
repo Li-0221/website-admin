@@ -16,6 +16,92 @@
       }
     },
     {
+      "path": "/user/index",
+      "name": "user",
+      "component": "/user/index",
+      "meta": {
+        "icon": "User",
+        "title": "用户管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      }
+    },
+    {
+      "path": "/finance/index",
+      "name": "finance",
+      "component": "/finance/index",
+      "meta": {
+        "icon": "Coin",
+        "title": "资金管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      }
+    },
+    {
+      "path": "/software/index",
+      "name": "software",
+      "redirect": "/software/software",
+      "meta": {
+        "icon": "Monitor",
+        "title": "软件管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/software/software",
+          "name": "software",
+          "component": "/software/software/index",
+          "meta": {
+            "icon": "Monitor",
+            "title": "软件管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/software/softwareType",
+          "name": "softwareType",
+          "component": "/software/softwareType/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "软件类型",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
+    },
+    {
+      "path": "/log/index",
+      "name": "log",
+      "component": "/log/index",
+      "meta": {
+        "icon": "Memo",
+        "title": "日志管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      }
+    },
+    {
       "path": "/dataScreen",
       "name": "dataScreen",
       "component": "/dataScreen/index",
@@ -139,20 +225,6 @@
             "icon": "Menu",
             "title": "复杂 ProTable",
             "isLink": "",
-            "isHide": false,
-            "isFull": false,
-            "isAffix": false,
-            "isKeepAlive": true
-          }
-        },
-        {
-          "path": "/proTable/document",
-          "name": "proTableDocument",
-          "component": "/proTable/document/index",
-          "meta": {
-            "icon": "Menu",
-            "title": "ProTable 文档",
-            "isLink": "https://juejin.cn/post/7166068828202336263/#heading-14",
             "isHide": false,
             "isFull": false,
             "isAffix": false,

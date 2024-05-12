@@ -33,11 +33,14 @@ export namespace Upload {
 // 登录模块
 export namespace Login {
   export interface ReqLoginForm {
-    username: string;
+    phone: string;
     password: string;
   }
   export interface ResLogin {
-    access_token: string;
+    token: string;
+    id: string;
+    name: string;
+    phone: string;
   }
   export interface ResAuthButtons {
     [key: string]: string[];

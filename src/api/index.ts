@@ -18,9 +18,7 @@ const config = {
   // 默认地址请求地址，可在 .env.** 文件中修改
   baseURL: import.meta.env.VITE_API_URL as string,
   // 设置超时时间
-  timeout: ResultEnum.TIMEOUT as number,
-  // 跨域时候允许携带凭证
-  withCredentials: true
+  timeout: ResultEnum.TIMEOUT as number
 };
 
 const axiosCanceler = new AxiosCanceler();
@@ -46,7 +44,7 @@ class RequestHttp {
         config.loading ??= true;
         config.loading && showFullScreenLoading();
         if (config.headers && typeof config.headers.set === "function") {
-          config.headers.set("x-access-token", userStore.token);
+          config.headers.set("authorization", `Bearer ${userStore.token}`);
         }
         return config;
       },

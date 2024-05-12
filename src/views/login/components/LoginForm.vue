@@ -1,7 +1,7 @@
 <template>
   <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
-    <el-form-item prop="username">
-      <el-input v-model="loginForm.username" placeholder="用户名：admin / user">
+    <el-form-item prop="phone">
+      <el-input v-model="loginForm.phone" placeholder="电话">
         <template #prefix>
           <el-icon class="el-input__icon">
             <user />
@@ -10,7 +10,7 @@
       </el-input>
     </el-form-item>
     <el-form-item prop="password">
-      <el-input v-model="loginForm.password" type="password" placeholder="密码：123456" show-password autocomplete="new-password">
+      <el-input v-model="loginForm.password" type="password" placeholder="密码" show-password autocomplete="new-password">
         <template #prefix>
           <el-icon class="el-input__icon">
             <lock />
@@ -41,7 +41,15 @@ import { useKeepAliveStore } from "@/stores/modules/keepAlive";
 import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
 import { CircleClose, UserFilled } from "@element-plus/icons-vue";
 import type { ElForm } from "element-plus";
-import md5 from "md5";
+import isMobilePhone from "validator/es/lib/isMobilePhone";
+
+const validatePhone = (rule: any, value: any, callback: any) => {
+  if (value === "") {
+    callback(new Error("请输入电话"));
+  } else if (!isMobilePhone(value, "zh-CN")) {
+    callback(new Error("电话号码格式错误"));
+  } else callback();
+};
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -51,13 +59,13 @@ const keepAliveStore = useKeepAliveStore();
 type FormInstance = InstanceType<typeof ElForm>;
 const loginFormRef = ref<FormInstance>();
 const loginRules = reactive({
-  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  phone: [{ validator: validatePhone, trigger: "blur" }],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }]
 });
 
 const loading = ref(false);
 const loginForm = reactive<Login.ReqLoginForm>({
-  username: "",
+  phone: "",
   password: ""
 });
 
@@ -69,8 +77,10 @@ const login = (formEl: FormInstance | undefined) => {
     loading.value = true;
     try {
       // 1.执行登录接口
-      const { data } = await loginApi({ ...loginForm, password: md5(loginForm.password) });
-      userStore.setToken(data.access_token);
+      const { data } = await loginApi({ ...loginForm, password: loginForm.password });
+      const { token, ...userInfo } = data;
+      userStore.setToken(token);
+      userStore.setUserInfo(userInfo);
 
       // 2.添加动态路由
       await initDynamicRouter();
