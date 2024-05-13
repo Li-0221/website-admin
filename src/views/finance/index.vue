@@ -107,7 +107,7 @@ const form = reactive({
 
 const columns = reactive<ColumnProps[]>([
   {
-    prop: "name",
+    prop: "User.name",
     label: "用户姓名"
   },
   {

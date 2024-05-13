@@ -6,16 +6,16 @@
       <el-descriptions-item label="时间">{{ infoData.createdAt }}</el-descriptions-item>
     </el-descriptions>
     <el-descriptions title="用户信息" :column="1" border class="mt-5">
-      <el-descriptions-item label="ID">{{ infoData.user.id }}</el-descriptions-item>
-      <el-descriptions-item label="名称">{{ infoData.user.name }}</el-descriptions-item>
-      <el-descriptions-item label="电话">{{ infoData.user.phone }}</el-descriptions-item>
+      <el-descriptions-item label="ID">{{ infoData.User.id }}</el-descriptions-item>
+      <el-descriptions-item label="名称">{{ infoData.User.name }}</el-descriptions-item>
+      <el-descriptions-item label="电话">{{ infoData.User.phone }}</el-descriptions-item>
       <el-descriptions-item label="状态">
-        <el-tag :type="statusEnum[infoData.user.status].type">{{ statusEnum[infoData.user.status].text }}</el-tag>
+        <el-tag :type="statusEnum[infoData.User.status].type">{{ statusEnum[infoData.User.status].text }}</el-tag>
       </el-descriptions-item>
       <el-descriptions-item label="上次登陆">
-        {{ dayjs(infoData.user.lastLoginAt).format("YYYY-MM-DD HH:mm:ss") }}
+        {{ dayjs(infoData.User.lastLoginAt).format("YYYY-MM-DD HH:mm:ss") }}
       </el-descriptions-item>
-      <el-descriptions-item label="登陆次数">{{ infoData.user.loginCount }}</el-descriptions-item>
+      <el-descriptions-item label="登陆次数">{{ infoData.User.loginCount }}</el-descriptions-item>
     </el-descriptions>
     <template #footer>
       <span class="dialog-footer">
