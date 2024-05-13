@@ -1,67 +1,63 @@
 <template>
-  <div class="h-full card">
-    <div class="flex">
-      <div class="today-traffic traffic-box">
-        <div class="traffic-img">
-          <img src="./images/today.png" alt="" />
+  <div class="h-full">
+    <div class="card !pb-0 mb-2">
+      <div class="flex">
+        <div class="today-traffic traffic-box">
+          <div class="traffic-img">
+            <img src="./images/today.png" alt="" />
+          </div>
+          <div class="flex flex-col">
+            <span class="item-value">{{ stats.today }}</span> <span class="traffic-name sle">今日流水</span>
+          </div>
         </div>
-        <div class="flex flex-col">
-          <span class="item-value">{{ stats.today }}</span> <span class="traffic-name sle">今日流水</span>
+        <div class="yesterday-traffic traffic-box ml-20">
+          <div class="traffic-img">
+            <img src="./images/book_sum.png" alt="" />
+          </div>
+          <div class="flex flex-col">
+            <span class="item-value">{{ stats.history }}</span> <span class="traffic-name sle">历史流水</span>
+          </div>
         </div>
       </div>
-      <div class="yesterday-traffic traffic-box ml-20">
-        <div class="traffic-img">
-          <img src="./images/book_sum.png" alt="" />
-        </div>
-        <div class="flex flex-col">
-          <span class="item-value">{{ stats.history }}</span> <span class="traffic-name sle">历史流水</span>
-        </div>
-      </div>
-    </div>
-    <el-tabs v-model="tabActive" class="demo-tabs">
-      <el-tab-pane label="今日流水" name="today"></el-tab-pane>
-      <el-tab-pane label="历史流水" name="history"></el-tab-pane>
-    </el-tabs>
-
-    <div class="card !pb-0 mb-2 flex">
-      <el-form :inline="true" :model="form" label-width="auto" ref="searchFormRef" class="flex-1">
-        <el-row :gutter="20">
-          <el-col :span="9">
-            <el-form-item label="用户姓名" prop="name">
-              <el-input v-model="form.name" placeholder="请输入" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="9">
-            <el-form-item label="创建时间" prop="createdAt">
-              <el-date-picker
-                v-model="form.createdAt"
-                type="daterange"
-                value-format="YYYY-MM-DD"
-                range-separator="To"
-                start-placeholder="Start date"
-                end-placeholder="End date"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+      <el-tabs v-model="tabActive" class="demo-tabs" @tab-change="tabChange">
+        <el-tab-pane label="今日流水" name="today"></el-tab-pane>
+        <el-tab-pane label="历史流水" name="history"></el-tab-pane>
+      </el-tabs>
 
       <div class="flex">
-        <el-button type="primary" :icon="Search" @click="getList(true)"> 搜索 </el-button>
-        <el-button :icon="Delete" @click="onReset(searchFormRef)"> 重置 </el-button>
+        <el-form :inline="true" :model="form" label-width="auto" ref="searchFormRef" class="flex-1">
+          <el-row :gutter="20">
+            <el-col :span="9">
+              <el-form-item label="用户姓名" prop="name">
+                <el-input v-model="form.name" placeholder="请输入" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="9" v-if="tabActive === 'history'">
+              <el-form-item label="创建时间" prop="createdAt">
+                <el-date-picker
+                  v-model="form.createdAt"
+                  type="daterange"
+                  value-format="YYYY-MM-DD"
+                  range-separator="To"
+                  start-placeholder="Start date"
+                  end-placeholder="End date"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+
+        <div class="flex">
+          <el-button type="primary" :icon="Search" @click="getList(true)"> 搜索 </el-button>
+          <el-button :icon="Delete" @click="onReset(searchFormRef)"> 重置 </el-button>
+        </div>
       </div>
     </div>
-    <div class="h-[calc(100%-122px)]">
+
+    <div class="h-[calc(100%-234px)]">
       <ProTable ref="proTable" :tool-button="false" :data="tableData" :columns="columns">
         <template #operation="{ row }">
-          <el-button
-            :type="row.status === 'Normal' ? 'warning' : 'primary'"
-            link
-            @click="editUser(row.id, row.status === 'Normal' ? 'Disabled' : 'Normal')"
-          >
-            {{ row.status === "Normal" ? "禁用" : "启用" }}
-          </el-button>
-          <el-button type="danger" link @click="delUser(row.id)">删除</el-button>
+          <el-button type="primary" link @click="userInfoRef?.openDialog(row)"> 查看 </el-button>
         </template>
         <template #pagination>
           <el-pagination
@@ -77,19 +73,23 @@
         </template>
       </ProTable>
     </div>
+    <UserInfo ref="userInfoRef" />
   </div>
 </template>
 
 <script lang="tsx" setup>
 import { onMounted, reactive, ref } from "vue";
-import { deleteUserApi, editUserApi, getUserList } from "@/api/modules/user";
 import ProTable from "@/components/ProTable/index.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import dayjs from "dayjs";
 import { Delete, Search } from "@element-plus/icons-vue";
-import { ElMessage, ElMessageBox, FormInstance } from "element-plus";
+import { FormInstance } from "element-plus";
 import { financeCountApi, financeListApi } from "@/api/modules/finance";
+import UserInfo from "./components/UserInfo.vue";
 
+const today = dayjs().format("YYYY-MM-DD");
+
+const userInfoRef = ref<InstanceType<typeof UserInfo>>();
 const proTable = ref<ProTableInstance>();
 const searchFormRef = ref<FormInstance>();
 const tabActive = ref("today");
@@ -102,43 +102,13 @@ const pagination = reactive({
 });
 const form = reactive({
   name: "",
-  createdAt: ["", ""]
+  createdAt: [today, today]
 });
-
-const statusEnum = {
-  Normal: { type: "success", text: "正常" },
-  Disabled: { type: "info", text: "禁用" }
-};
 
 const columns = reactive<ColumnProps[]>([
   {
     prop: "name",
     label: "用户姓名"
-  },
-  {
-    prop: "phone",
-    label: "电话"
-  },
-  {
-    prop: "loginCount",
-    label: "登录次数",
-    sortable: true
-  },
-  {
-    prop: "status",
-    label: "状态",
-    render: ({ row }) => {
-      return <el-tag type={statusEnum[row.status].type}>{statusEnum[row.status].text}</el-tag>;
-    }
-  },
-  {
-    prop: "role",
-    label: "角色",
-    render: ({ row }) => {
-      return (
-        <el-tag type={row.role === "VIP_USER" ? "primary" : "info"}>{row.role === "VIP_USER" ? "VIP用户" : "普通用户"}</el-tag>
-      );
-    }
   },
   {
     prop: "createdAt",
@@ -150,12 +120,12 @@ const columns = reactive<ColumnProps[]>([
     }
   },
   {
-    prop: "lastLoginAt",
-    label: "登录时间",
+    prop: "updatedAt",
+    label: "更新时间",
     width: 180,
     sortable: true,
     render: ({ row }) => {
-      return row.lastLoginAt ? dayjs(row.lastLoginAt).format("YYYY-MM-DD HH:mm:ss") : "";
+      return dayjs(row.updatedAt).format("YYYY-MM-DD HH:mm:ss");
     }
   },
   { prop: "operation", label: "操作", fixed: "right", width: 120 }
@@ -174,28 +144,21 @@ const getStats = async () => {
   stats.today = today;
 };
 
+const tabChange = (tabPaneName: string) => {
+  form.name = "";
+  if (tabPaneName === "history") {
+    form.createdAt = ["", ""];
+    getList(true);
+  } else {
+    form.createdAt = [today, today];
+    getList(true);
+  }
+};
+
 const onReset = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
   getList(true);
-};
-
-const editUser = async (id: string, status: string) => {
-  await editUserApi({ id, type: status });
-  ElMessage.success("操作成功");
-  getList();
-};
-
-const delUser = (id: string) => {
-  ElMessageBox.confirm("此操作将永久删除该用户, 是否继续?", "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async () => {
-    await deleteUserApi(id);
-    ElMessage.success("删除成功");
-    getList();
-  });
 };
 
 onMounted(() => {
