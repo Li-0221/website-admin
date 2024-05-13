@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="dialogVisible" title="资金信息" width="500px" draggable>
+  <el-dialog v-model="dialogVisible" title="资金信息" width="500px">
     <el-descriptions title="资金信息" :column="1" border>
       <el-descriptions-item label="ID">{{ infoData.id }}</el-descriptions-item>
       <el-descriptions-item label="金额">{{ infoData.amount }}</el-descriptions-item>
