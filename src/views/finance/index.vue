@@ -111,21 +111,17 @@ const columns = reactive<ColumnProps[]>([
     label: "用户姓名"
   },
   {
+    prop: "amount",
+    label: "金额",
+    sortable: true
+  },
+  {
     prop: "createdAt",
     label: "创建时间",
     width: 180,
     sortable: true,
     render: ({ row }) => {
       return dayjs(row.createdAt).format("YYYY-MM-DD HH:mm:ss");
-    }
-  },
-  {
-    prop: "updatedAt",
-    label: "更新时间",
-    width: 180,
-    sortable: true,
-    render: ({ row }) => {
-      return dayjs(row.updatedAt).format("YYYY-MM-DD HH:mm:ss");
     }
   },
   { prop: "operation", label: "操作", fixed: "right", width: 120 }

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="dialogVisible" title="资金信息" width="850px" @close="resetForm(formRef)">
+  <el-dialog v-model="dialogVisible" title="软件信息" width="850px" destroy-on-close @close="resetForm()">
     <el-form :model="form" label-width="auto" ref="formRef" :rules="rules">
       <el-form-item label="软件名称" prop="title">
         <el-input v-model="form.title" placeholder="请输入" />
@@ -16,7 +16,7 @@
       <el-form-item label="详情" prop="detail">
         <WangEditor v-model:value="form.detail" height="400px" />
       </el-form-item>
-      <el-form-item label="软件分类" prop="softWareTypeId">
+      <el-form-item label="软件分类" prop="softwareTypeId">
         <el-select v-model="form.softwareTypeId" placeholder="请选择">
           <el-option :label="item.name" :value="item.id" v-for="item in softwareTypeOption" :key="item.id" />
         </el-select>
@@ -67,9 +67,10 @@ const rules = reactive<FormRules>({
   softwareTypeId: [{ required: true, message: "请选择", trigger: "change" }]
 });
 
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.resetFields();
+const resetForm = () => {
+  Object.keys(form).forEach(k => {
+    form[k] = "";
+  });
 };
 
 const beforeAvatarUpload: UploadProps["beforeUpload"] = rawFile => {
@@ -77,8 +78,8 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = rawFile => {
   if (!imageMIME.includes(rawFile.type)) {
     ElMessage.error("图片的类型必须是 JPEG PNG GIF ！");
     return false;
-  } else if (rawFile.size / 1024 / 1024 > 5) {
-    ElMessage.error("图片的大小不要超过 5MB ！");
+  } else if (rawFile.size / 1024 / 1024 > 3) {
+    ElMessage.error("图片的大小不要超过 3MB ！");
     return false;
   }
 
@@ -96,24 +97,30 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async valid => {
     if (valid) {
       if (form.id) {
-        await editSoftware(form.id ? form : { ...form, id: undefined });
-        ElMessage("编辑软件成功");
+        await editSoftware(form);
+        ElMessage.success("编辑软件成功");
       } else {
-        await addSoftware(form.id ? form : { ...form, id: undefined });
-        ElMessage("新增软件成功");
+        await addSoftware({ ...form, id: undefined });
+        ElMessage.success("新增软件成功");
       }
 
       emit("refreshList");
+      dialogVisible.value = false;
     }
   });
 };
 
 const onCancel = () => {
-  resetForm(formRef.value);
+  resetForm();
   dialogVisible.value = false;
 };
 
-const openDialog = () => {
+const openDialog = (data?: any) => {
+  if (data) {
+    Object.keys(form).forEach(k => {
+      form[k] = data[k];
+    });
+  }
   dialogVisible.value = true;
 };
 

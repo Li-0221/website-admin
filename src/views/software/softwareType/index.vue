@@ -34,8 +34,8 @@ const columns = reactive<ColumnProps[]>([
     label: "包含软件",
     render: ({ row }) => {
       return row.SoftWare.length
-        ? row.SoftWare.map(({ id }) => {
-            <el-tag key={id}>{id}</el-tag>;
+        ? row.SoftWare.map(({ id, title }) => {
+            return <el-tag key={id}>{title}</el-tag>;
           })
         : "";
     }
