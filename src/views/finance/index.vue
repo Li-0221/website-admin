@@ -1,35 +1,37 @@
 <template>
-  <div class="h-full">
+  <div class="h-full card">
+    <div class="flex">
+      <div class="today-traffic traffic-box">
+        <div class="traffic-img">
+          <img src="./images/today.png" alt="" />
+        </div>
+        <div class="flex flex-col">
+          <span class="item-value">{{ stats.today }}</span> <span class="traffic-name sle">今日流水</span>
+        </div>
+      </div>
+      <div class="yesterday-traffic traffic-box ml-20">
+        <div class="traffic-img">
+          <img src="./images/book_sum.png" alt="" />
+        </div>
+        <div class="flex flex-col">
+          <span class="item-value">{{ stats.history }}</span> <span class="traffic-name sle">历史流水</span>
+        </div>
+      </div>
+    </div>
+    <el-tabs v-model="tabActive" class="demo-tabs">
+      <el-tab-pane label="今日流水" name="today"></el-tab-pane>
+      <el-tab-pane label="历史流水" name="history"></el-tab-pane>
+    </el-tabs>
+
     <div class="card !pb-0 mb-2 flex">
       <el-form :inline="true" :model="form" label-width="auto" ref="searchFormRef" class="flex-1">
         <el-row :gutter="20">
-          <el-col :span="8">
-            <el-form-item label="姓名" prop="name">
+          <el-col :span="9">
+            <el-form-item label="用户姓名" prop="name">
               <el-input v-model="form.name" placeholder="请输入" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="电话" prop="phone">
-              <el-input v-model="form.phone" placeholder="请输入" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="状态" prop="status">
-              <el-select v-model="form.status" placeholder="请选择" clearable>
-                <el-option label="正常" value="Normal" />
-                <el-option label="禁用" value="Disabled" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="角色" prop="role">
-              <el-select v-model="form.role" placeholder="请选择" clearable>
-                <el-option label="VIP用户" value="VIP_USER" />
-                <el-option label="普通用户" value="NORMAL_USER" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
+          <el-col :span="9">
             <el-form-item label="创建时间" prop="createdAt">
               <el-date-picker
                 v-model="form.createdAt"
@@ -41,24 +43,12 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="登录时间" prop="lastLoginAt">
-              <el-date-picker
-                v-model="form.lastLoginAt"
-                type="daterange"
-                value-format="YYYY-MM-DD"
-                range-separator="To"
-                start-placeholder="Start date"
-                end-placeholder="End date"
-              />
-            </el-form-item>
-          </el-col>
         </el-row>
       </el-form>
 
-      <div class="flex-col flex ml-8">
+      <div class="flex">
         <el-button type="primary" :icon="Search" @click="getList(true)"> 搜索 </el-button>
-        <el-button :icon="Delete" class="!ml-0 mt-[18px]" @click="onReset(searchFormRef)"> 重置 </el-button>
+        <el-button :icon="Delete" @click="onReset(searchFormRef)"> 重置 </el-button>
       </div>
     </div>
     <div class="h-[calc(100%-122px)]">
@@ -98,9 +88,12 @@ import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import dayjs from "dayjs";
 import { Delete, Search } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox, FormInstance } from "element-plus";
+import { financeCountApi, financeListApi } from "@/api/modules/finance";
 
 const proTable = ref<ProTableInstance>();
 const searchFormRef = ref<FormInstance>();
+const tabActive = ref("today");
+const stats = reactive({ today: 0, history: 0 });
 const total = ref(0);
 const tableData = ref([]);
 const pagination = reactive({
@@ -109,11 +102,7 @@ const pagination = reactive({
 });
 const form = reactive({
   name: "",
-  phone: "",
-  role: "",
-  status: "",
-  createdAt: ["", ""],
-  lastLoginAt: ["", ""]
+  createdAt: ["", ""]
 });
 
 const statusEnum = {
@@ -174,9 +163,15 @@ const columns = reactive<ColumnProps[]>([
 
 const getList = async (resetPage = false) => {
   if (resetPage) pagination.pageNum = 1;
-  const { data } = await getUserList({ ...form, ...pagination });
-  tableData.value = data.users;
+  const { data } = await financeListApi({ ...form, ...pagination });
+  tableData.value = data.finances;
   total.value = data.total;
+};
+const getStats = async () => {
+  const { data } = await financeCountApi();
+  const { today, history } = data;
+  stats.history = history;
+  stats.today = today;
 };
 
 const onReset = (formEl: FormInstance | undefined) => {
@@ -205,5 +200,56 @@ const delUser = (id: string) => {
 
 onMounted(() => {
   getList();
+  getStats();
 });
 </script>
+
+<style lang="scss" scoped>
+.traffic-box {
+  box-sizing: border-box;
+  display: flex;
+  width: 47%;
+  padding: 14px;
+  justify-content: space-around;
+  border-radius: 30px;
+  max-width: 260px;
+  .traffic-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    border-radius: 19px;
+  }
+}
+img {
+  width: 33px;
+  height: 33px;
+}
+.item-value {
+  margin-bottom: 4px;
+  font-family: DIN;
+  font-size: 28px;
+  font-weight: bold;
+  color: #1a1a37;
+}
+.traffic-name {
+  overflow: hidden;
+  font-family: DIN;
+  font-size: 15px;
+  color: #1a1a37;
+  white-space: nowrap;
+}
+.today-traffic {
+  background: url("./images/3-bg.png");
+  background-color: #fdf3e9;
+  background-size: 100% 100%;
+}
+.yesterday-traffic {
+  background: url("./images/4-bg.png");
+  background-color: #f0f5fb;
+  background-size: 100% 100%;
+}
+</style>

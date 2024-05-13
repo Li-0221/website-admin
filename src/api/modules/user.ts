@@ -1,7 +1,7 @@
 import http from "@/api";
 
 // 获取用户列表
-export const getUserList = (params: any) => {
+export const getUserList = (params: Object) => {
   return http.post<any>(`/user/list`, params);
 };
 
