@@ -65,6 +65,7 @@ interface SoftwareType {
   id: string;
   name: string;
 }
+const baseUrl = import.meta.env.VITE_API_URL;
 
 const editSoftwareRef = ref<InstanceType<typeof EditSoftware>>();
 const proTable = ref<ProTableInstance>();
@@ -73,7 +74,7 @@ const total = ref(0);
 const tableData = ref([]);
 const softwareTypeOption = ref<SoftwareType[]>([]);
 const pagination = reactive({
-  pageSize: 10,
+  pageSize: 25,
   pageNum: 1
 });
 const form = reactive({
@@ -94,11 +95,11 @@ const columns = reactive<ColumnProps[]>([
     render: ({ row }) => {
       return (
         <el-image
-          src={row.image}
+          src={baseUrl + row.image}
           zoom-rate={1.2}
           max-scale={7}
           min-scale={0.2}
-          preview-src-list={[row.image]}
+          preview-src-list={[baseUrl + row.image]}
           initial-index={4}
           preview-teleported
           z-index={99999}

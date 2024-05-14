@@ -87,7 +87,7 @@
 
 <script lang="tsx" setup>
 import { onMounted, reactive, ref } from "vue";
-import { deleteUserApi, editUserApi, getUserList } from "@/api/modules/user";
+import { deleteUserApi, getUserList } from "@/api/modules/user";
 import ProTable from "@/components/ProTable/index.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import dayjs from "dayjs";
@@ -102,7 +102,7 @@ const searchFormRef = ref<FormInstance>();
 const total = ref(0);
 const tableData = ref([]);
 const pagination = reactive({
-  pageSize: 10,
+  pageSize: 25,
   pageNum: 1
 });
 const form = reactive({

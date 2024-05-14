@@ -4,8 +4,15 @@
       <el-form :inline="true" :model="form" label-width="auto" ref="searchFormRef" class="flex-1">
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="标题" prop="title">
-              <el-input v-model="form.title" placeholder="请输入" clearable />
+            <el-form-item label="日志时间" prop="time">
+              <el-date-picker
+                v-model="form.time"
+                type="daterange"
+                value-format="YYYY-MM-DD"
+                range-separator="To"
+                start-placeholder="Start date"
+                end-placeholder="End date"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -69,7 +76,6 @@
 
 <script lang="tsx" setup>
 import { onMounted, reactive, ref } from "vue";
-import { deleteUserApi, editUserApi, getUserList } from "@/api/modules/user";
 import ProTable from "@/components/ProTable/index.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import dayjs from "dayjs";
@@ -84,19 +90,23 @@ const editLogRef = ref<InstanceType<typeof EditLog>>();
 const total = ref(0);
 const tableData = ref([]);
 const pagination = reactive({
-  pageSize: 10,
+  pageSize: 25,
   pageNum: 1
 });
 const form = reactive({
-  title: "",
+  time: ["", ""],
   createdAt: ["", ""],
   updatedAt: ["", ""]
 });
 
 const columns = reactive<ColumnProps[]>([
   {
-    prop: "title",
-    label: "日志标题"
+    prop: "time",
+    label: "日志时间",
+    sortable: true,
+    render: ({ row }) => {
+      return dayjs(row.time).format("YYYY-MM-DD");
+    }
   },
   {
     prop: "createdAt",
@@ -130,12 +140,6 @@ const onReset = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
   getList(true);
-};
-
-const edit = async (id: string, status: string) => {
-  await editUserApi({ id, type: status });
-  ElMessage.success("操作成功");
-  getList();
 };
 
 const del = (id: string) => {

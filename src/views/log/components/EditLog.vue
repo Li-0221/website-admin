@@ -1,8 +1,8 @@
 <template>
   <el-dialog v-model="dialogVisible" title="日志信息" width="850px" destroy-on-close @close="resetForm()">
     <el-form :model="form" label-width="auto" ref="formRef" :rules="rules">
-      <el-form-item label="日志名称" prop="title">
-        <el-input v-model="form.title" placeholder="请输入" />
+      <el-form-item label="时间" prop="time">
+        <el-date-picker v-model="form.time" type="date" placeholder="请输入" />
       </el-form-item>
       <el-form-item label="内容" prop="detail">
         <WangEditor :toolbar-config="toolbarConfig" v-model:value="form.detail" height="400px" />
@@ -20,29 +20,23 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import WangEditor from "@/components/WangEditor/index.vue";
-import { ElMessage, FormInstance, FormRules, UploadProps } from "element-plus";
-import { Plus } from "@element-plus/icons-vue";
-import { addSoftware, editSoftware } from "@/api/modules/software";
+import { ElMessage, FormInstance, FormRules } from "element-plus";
 import { addLog, editLog } from "@/api/modules/log";
-interface SoftwareType {
-  id: string;
-  name: string;
-}
 
 const emit = defineEmits(["refreshList"]);
 const toolbarConfig = {
-  toolbarKeys: ["bulletedList", "bold", "todo", "emotion", "insertLink", "fullScreen"]
+  toolbarKeys: ["headerSelect", "bulletedList", "bold", "emotion", "fullScreen"]
 };
 const formRef = ref<FormInstance>();
 const dialogVisible = ref(false);
 const form = reactive({
   id: "",
-  title: "",
+  time: "",
   detail: ""
 });
 
 const rules = reactive<FormRules>({
-  title: [{ required: true, message: "请输入", trigger: "blur" }],
+  time: [{ required: true, message: "请输入", trigger: "blur" }],
   detail: [{ required: true, message: "请输入", trigger: "blur" }]
 });
 
@@ -78,9 +72,12 @@ const onCancel = () => {
 const openDialog = (data?: any) => {
   if (data) {
     form.id = data.id;
-    form.title = data.title;
+    form.time = data.time;
     form.detail = data.detail;
+  } else {
+    form.detail = `<h1>软件名称1</h1><ul><li>新增功能XXXXXX</li><li>修复样式问题</li><li>修复xxxxxxxxxx</li></ul><h1>软件名称2</h1><ul><li>新增功能XXXXXX</li><li>修复样式问题</li><li>修复xxxxxxxxxx</li></ul><p><br></p><p><br></p>`;
   }
+
   dialogVisible.value = true;
 };
 

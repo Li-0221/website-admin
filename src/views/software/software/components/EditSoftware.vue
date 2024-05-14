@@ -8,9 +8,20 @@
         <el-input v-model="form.url" placeholder="请输入" />
       </el-form-item>
       <el-form-item label="封面图" prop="image">
-        <el-upload class="avatar-uploader" :show-file-list="false" :before-upload="beforeAvatarUpload">
-          <img v-if="form.image" :src="form.image" class="avatar" />
+        <el-upload
+          accept=".jpg,.jpeg,.png,.gif,"
+          class="avatar-uploader"
+          :show-file-list="false"
+          :headers="{ authorization: `Bearer ${userStore.token}` }"
+          :action="fileUploadUrl"
+          :before-upload="beforeAvatarUpload"
+          :on-success="handleAvatarSuccess"
+        >
+          <img v-if="form.image" :src="`${baseUrl}${form.image}`" class="avatar" />
           <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+          <template #tip>
+            <div class="el-upload__tip">jpg/png/gif files with a size less than 5M.</div>
+          </template>
         </el-upload>
       </el-form-item>
       <el-form-item label="描述" prop="desc">
@@ -40,6 +51,7 @@ import WangEditor from "@/components/WangEditor/index.vue";
 import { ElMessage, FormInstance, FormRules, UploadProps } from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
 import { addSoftware, editSoftware } from "@/api/modules/software";
+import { useUserStore } from "@/stores/modules/user";
 interface SoftwareType {
   id: string;
   name: string;
@@ -48,8 +60,12 @@ interface Props {
   softwareTypeOption: SoftwareType[];
 }
 
+const fileUploadUrl = `${import.meta.env.VITE_API_URL}file/upload`;
+const baseUrl = import.meta.env.VITE_API_URL;
+
 defineProps<Props>();
 const emit = defineEmits(["refreshList"]);
+const userStore = useUserStore();
 
 const formRef = ref<FormInstance>();
 const dialogVisible = ref(false);
@@ -83,18 +99,15 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = rawFile => {
   if (!imageMIME.includes(rawFile.type)) {
     ElMessage.error("图片的类型必须是 JPEG PNG GIF ！");
     return false;
-  } else if (rawFile.size / 1024 / 1024 > 3) {
-    ElMessage.error("图片的大小不要超过 3MB ！");
+  } else if (rawFile.size / 1024 / 1024 > 5) {
+    ElMessage.error("图片的大小不要超过 5MB ！");
     return false;
   }
-
-  const reader = new FileReader();
-  reader.readAsDataURL(rawFile);
-  reader.onload = event => {
-    form.image = event.target?.result as string;
-  };
-  reader.onerror = error => ElMessage.error("图片读取失败");
   return true;
+};
+
+const handleAvatarSuccess: UploadProps["onSuccess"] = response => {
+  form.image = response.data;
 };
 
 const onSubmit = async (formEl: FormInstance | undefined) => {

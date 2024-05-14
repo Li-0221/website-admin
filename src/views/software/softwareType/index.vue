@@ -35,7 +35,11 @@ const columns = reactive<ColumnProps[]>([
     render: ({ row }) => {
       return row.SoftWare.length
         ? row.SoftWare.map(({ id, title }) => {
-            return <el-tag key={id}>{title}</el-tag>;
+            return (
+              <el-tag key={id} class="ml-2">
+                {title}
+              </el-tag>
+            );
           })
         : "";
     }

@@ -15,12 +15,13 @@
 
 <script setup lang="ts" name="WangEditor">
 import { nextTick, computed, inject, shallowRef, onBeforeUnmount } from "vue";
-import { IToolbarConfig, IEditorConfig, DomEditor } from "@wangeditor/editor";
+import { IToolbarConfig, IEditorConfig } from "@wangeditor/editor";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import { uploadImg, uploadVideo } from "@/api/modules/upload";
 import "@wangeditor/editor/dist/css/style.css";
 import { formContextKey, formItemContextKey } from "element-plus";
 
+const baseUrl = import.meta.env.VITE_API_URL;
 // 富文本 DOM 元素
 const editorRef = shallowRef();
 
@@ -98,7 +99,7 @@ props.editorConfig.MENU_CONF!["uploadImage"] = {
     formData.append("file", file);
     try {
       const { data } = await uploadImg(formData);
-      insertFn(data.fileUrl);
+      insertFn(baseUrl + data);
     } catch (error) {
       console.log(error);
     }

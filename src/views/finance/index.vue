@@ -97,7 +97,7 @@ const stats = reactive({ today: 0, history: 0 });
 const total = ref(0);
 const tableData = ref([]);
 const pagination = reactive({
-  pageSize: 10,
+  pageSize: 25,
   pageNum: 1
 });
 const form = reactive({
