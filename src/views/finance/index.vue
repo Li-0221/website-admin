@@ -28,8 +28,13 @@
         <el-form :inline="true" :model="form" label-width="auto" ref="searchFormRef" class="flex-1">
           <el-row :gutter="20">
             <el-col :span="9">
-              <el-form-item label="用户姓名" prop="name">
+              <el-form-item label="昵称" prop="name">
                 <el-input v-model="form.name" placeholder="请输入" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="9">
+              <el-form-item label="电话" prop="phone">
+                <el-input v-model="form.phone" placeholder="请输入" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="9" v-if="tabActive === 'history'">
@@ -102,6 +107,7 @@ const pagination = reactive({
 });
 const form = reactive({
   name: "",
+  phone: "",
   createdAt: [today, today]
 });
 
@@ -109,6 +115,10 @@ const columns = reactive<ColumnProps[]>([
   {
     prop: "User.name",
     label: "用户姓名"
+  },
+  {
+    prop: "User.phone",
+    label: "用户电话"
   },
   {
     prop: "amount",
