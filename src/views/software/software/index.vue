@@ -98,8 +98,10 @@ const columns = reactive<ColumnProps[]>([
           zoom-rate={1.2}
           max-scale={7}
           min-scale={0.2}
-          preview-src-list={[row.src]}
+          preview-src-list={[row.image]}
           initial-index={4}
+          preview-teleported
+          z-index={99999}
           fit="cover"
         />
       );

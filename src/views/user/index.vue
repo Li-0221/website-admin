@@ -64,13 +64,7 @@
     <div class="h-[calc(100%-122px)]">
       <ProTable ref="proTable" :tool-button="false" :data="tableData" :columns="columns">
         <template #operation="{ row }">
-          <el-button
-            :type="row.status === 'Normal' ? 'warning' : 'primary'"
-            link
-            @click="editUser(row.id, row.status === 'Normal' ? 'Disabled' : 'Normal')"
-          >
-            {{ row.status === "Normal" ? "禁用" : "启用" }}
-          </el-button>
+          <el-button type="primary" link @click="editUserRef?.openDialog(row)"> 编辑 </el-button>
           <el-button type="danger" link @click="delUser(row.id)">删除</el-button>
         </template>
         <template #pagination>
@@ -87,6 +81,7 @@
         </template>
       </ProTable>
     </div>
+    <EditUser ref="editUserRef" @refresh-list="getList()" />
   </div>
 </template>
 
@@ -99,7 +94,9 @@ import dayjs from "dayjs";
 import { Delete, Search } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox, FormInstance } from "element-plus";
 import { statusEnum } from "@/enums/userEnum";
+import EditUser from "./components/EditUser.vue";
 
+const editUserRef = ref<InstanceType<typeof EditUser>>();
 const proTable = ref<ProTableInstance>();
 const searchFormRef = ref<FormInstance>();
 const total = ref(0);
@@ -179,12 +176,6 @@ const onReset = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
   getList(true);
-};
-
-const editUser = async (id: string, status: string) => {
-  await editUserApi({ id, type: status });
-  ElMessage.success("操作成功");
-  getList();
 };
 
 const delUser = (id: string) => {

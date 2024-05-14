@@ -4,6 +4,9 @@
       <el-form-item label="软件名称" prop="title">
         <el-input v-model="form.title" placeholder="请输入" />
       </el-form-item>
+      <el-form-item label="下载地址" prop="url">
+        <el-input v-model="form.url" placeholder="请输入" />
+      </el-form-item>
       <el-form-item label="封面图" prop="image">
         <el-upload class="avatar-uploader" :show-file-list="false" :before-upload="beforeAvatarUpload">
           <img v-if="form.image" :src="form.image" class="avatar" />
@@ -52,6 +55,7 @@ const formRef = ref<FormInstance>();
 const dialogVisible = ref(false);
 const form = reactive({
   id: "",
+  url: "",
   title: "",
   image: "",
   desc: "",
@@ -61,6 +65,7 @@ const form = reactive({
 
 const rules = reactive<FormRules>({
   title: [{ required: true, message: "请输入", trigger: "blur" }],
+  url: [{ required: true, message: "请输入", trigger: "blur" }],
   image: [{ required: true, message: "请上传", trigger: "blur" }],
   desc: [{ required: true, message: "请输入", trigger: "blur" }],
   detail: [{ required: true, message: "请输入", trigger: "blur" }],

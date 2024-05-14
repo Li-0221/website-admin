@@ -31,12 +31,8 @@ import router from "@/routers";
 import I18n from "@/languages/index";
 // pinia store
 import pinia from "@/stores";
-// errorHandler
-import errorHandler from "@/utils/errorHandler";
 
 const app = createApp(App);
-
-app.config.errorHandler = errorHandler;
 
 // register the element Icons component
 Object.keys(Icons).forEach(key => {
