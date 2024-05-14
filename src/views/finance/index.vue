@@ -28,11 +28,6 @@
         <el-form :inline="true" :model="form" label-width="auto" ref="searchFormRef" class="flex-1">
           <el-row :gutter="20">
             <el-col :span="9">
-              <el-form-item label="昵称" prop="name">
-                <el-input v-model="form.name" placeholder="请输入" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="9">
               <el-form-item label="电话" prop="phone">
                 <el-input v-model="form.phone" placeholder="请输入" clearable />
               </el-form-item>
@@ -114,7 +109,7 @@ const form = reactive({
 const columns = reactive<ColumnProps[]>([
   {
     prop: "User.name",
-    label: "用户姓名"
+    label: "用户昵称"
   },
   {
     prop: "User.phone",
